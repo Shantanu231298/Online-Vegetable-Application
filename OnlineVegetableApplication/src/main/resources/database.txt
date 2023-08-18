@@ -1,0 +1,134 @@
+CREATE TABLE users(
+user_id number(20) CONSTRAINTS users_user_id_pk PRIMARY KEY,
+password varchar2(10) CONSTRAINTS users_password_nn NOT NULL,
+role varchar2(10) CONSTRAINTS users_role_nn NOT NULL
+);
+
+INSERT INTO users VALUES(1,'abc123','admin');
+INSERT INTO users VALUES(2,'xyz123','customer');
+INSERT INTO users VALUES(3,'pqr123','admin');
+INSERT INTO users VALUES(4,'rst123','customer');
+
+
+//completed
+-------------------------------------------------------------------------------
+CREATE TABLE admin(
+admin_id number(19) CONSTRAINTS admin_admin_id_pk PRIMARY KEY,
+name varchar2(50) CONSTRAINTS admin_name_nn NOT NULL,
+contact_number varchar2(10) CONSTRAINTS admin_contact_number_nn NOT NULL
+); 
+ 
+INSERT INTO admin VALUES(1,'rahul','9874567345');
+INSERT INTO admin VALUES(2,'raj','9474567345');
+INSERT INTO admin VALUES(3,'pallavi','9774567345');
+INSERT INTO admin VALUES(4,'sakshi','9874867345');
+
+
+//completed
+--------------------------------------------------------------------------------------
+CREATE TABLE customers(
+customer_id number(20) CONSTRAINTS customers_customer_id_pk PRIMARY KEY,
+name varchar2(30) CONSTRAINTS customers_name_nn NOT NULL,
+mobile_number varchar2(10) CONSTRAINTS customers_mobile_number_nn NOT NULL,
+email_id varchar2(30) CONSTRAINTS customers_email_id_un_nn UNIQUE NOT NULL,
+password varchar2(20) CONSTRAINTS customers_password_un_nn UNIQUE NOT NULL,
+flatNo varchar2(10),
+buildingName varchar2(30),
+area varchar2(30),
+ city varchar2(20), 
+ state varchar2(20), 
+ pincode varchar2(10)
+);
+
+
+alter table customers rename column buildingName to building_name;
+alter table customers rename column flatNo to flat_no;
+
+
+INSERT INTO customers VALUES(10,'Pankhuri','8447630806','pankhuri@gmail.com','abc13','D-120','Abc','sector21','Noida','UP',
+'20316');
+
+INSERT INTO customers VALUES(11,'Pallavi', '8447630867',  'pallavi@gmail.com','tuv123','A-120','xyz','sector18','Noida','UP',
+'20318');
+
+
+INSERT INTO customers VALUES(12,'Raj', '8447630887',  'raj@gmail.com','avcv123','C-120','bcf','sector18','Noida','UP','20318');
+
+
+INSERT INTO customers(customer_id,name,mobile_number,email_id,password,flat_no,building_name,area,city,state,pincode)
+VALUES
+(13,'Sakshi','7865432356','skashi@gmail.com','awe332','B-123','ASD','sector-40','Pune','Maharashtra','25734');
+
+//completed
+---------------------------------------------------------------------------------
+CREATE TABLE veg(
+veg_id number(19) CONSTRAINTS veg_veg_id_pk PRIMARY KEY,
+name varchar2(50) CONSTRAINTS veg_name_nn NOT NULL,
+type varchar2(50) CONSTRAINTS veg_type_nn NOT NULL,
+price number(10,2) CONSTRAINTS veg_price_nn NOT NULL,
+quantity number(10) CONSTRAINTS veg_quantity_nn NOT NULL
+);
+INSERT INTO veg values(400,'orange','Fruit',30,2);
+INSERT INTO veg values(500,'apple','Fruit',50,2);
+
+ALTER TABLE veg add cart_id number(19) constraint veg_cart_id_fk references cart(cart_id);
+ALTER TABLE veg add order_no number(19) constraint veg_order_no_fk references orders(order_no);
+//completed
+insert into veg(veg_id,name,type,price,quantity) values(600,'Potato','Vegetable',50,2);
+
+//alter table veg drop column order_no;
+
+-------------------------------------------------------------------------------------------
+CREATE TABLE orders(
+order_no number(19) CONSTRAINTS orders_order_no_pk PRIMARY KEY,
+customer_id number(19) CONSTRAINTS orders_customer_id_fk references customers(customer_id),
+total_amount  number(10,2) CONSTRAINTS orders_total_amount_nn NOT NULL,
+order_date  date CONSTRAINTS orders_order_date_nn NOT NULL,
+status varchar2(20) CONSTRAINTS orders_status_nn NOT NULL);
+
+Alter table orders add veg_id number(19) CONSTRAINTS order_ved_id_fk REFERENCES veg(veg_id);
+
+//completed
+INSERT INTO orders VALUES(1,10,70,'21-apr-2021','Delivered',400);
+INSERT INTO orders VALUES(2,11,100,'22-apr-2021','Delivered',500);
+INSERT INTO orders VALUES(3,12,120,'23-apr-2021','Delivered',600);
+------------------------------------------------------------------------------------------------
+CREATE TABLE bill(
+billing_id number(19) CONSTRAINTS bill_billing_id_pk PRIMARY KEY,
+transaction_mode varchar2(20) CONSTRAINTS bill_transcation_mode_nn NOT NULL,
+transaction_date date CONSTRAINTS bill_transcation_date_nn NOT NULL,
+transaction_status varchar2(20) CONSTRAINTS bill_transcation_status_nn NOT NULL,
+order_no number(19) constraint bill_order_no_fk references orders(order_no)
+);
+
+INSERT INTO bill VALUES(100,'COD','20-apr-2021','completed',1);
+INSERT INTO bill VALUES(200,'Credit Card','23-apr-2021','completed',2);
+INSERT INTO bill VALUES(300,'Card','24-apr-2021','completed',3);
+//completed
+------------------------------------------------------------------------------------------
+CREATE TABLE feedback(
+feedback_id number(19) CONSTRAINTS feedback_feedback_id_pk PRIMARY KEY,
+customer_id number(19) constraints feedback_customer_id_fk references customers(customer_id),
+veg_id number(19) constraints feedback_veg_id_fk references veg(veg_id),
+rating number(10) CONSTRAINTS feedback_rating_nn NOT NULL,
+comments varchar2(30) CONSTRAINTS feedback_comments_nn NOT NULL);
+
+//completed
+INSERT INTO feedback VALUES(1,10,400,7,'Good');
+INSERT INTO feedback VALUES(2,11,500,8,'Good');
+INSERT INTO feedback VALUES(3,12,600,5,'Ok');
+---------------------------------------------------------------------------------------
+
+
+CREATE TABLE cart(
+cart_id number(19) CONSTRAINTS cart_cart_id_pk PRIMARY KEY,
+customer_id number(19) constraints cart_customer_id_fk references customers(customer_id),
+veg_id number(19) constraints cart_veg_id_fk references veg(veg_id)
+);
+
+
+
+//completed
+INSERT INTO  cart VALUES(1,11,400);
+INSERT INTO  cart VALUES(2,10,500);
+INSERT INTO  cart VALUES(3,12,600);
